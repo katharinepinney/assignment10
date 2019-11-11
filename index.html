@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>assignment 10</title>
+	<script language="Javascript"> 
+		function loadFile() {
+			console.log("hello");
+			/* Step 1: Make instance of request object...
+			...to make HTTP request after page is loaded*/
+			request = new XMLHttpRequest();
+			console.log("1 - request object created");
+ 
+			// Step 2: Set the URL for the AJAX request to be the JSON file
+ 
+			request.open("GET", "https://api.citybik.es/v2/networks", true);
+
+			console.log("2 - opened request file");
+ 
+			// Step 3: set up event handler/callback
+
+			request.onreadystatechange = function() {
+				console.log("3 - readystatechange event fired.");
+ 
+				if (request.readyState == 4 && request.status == 200) {
+
+					// Step 5: wait for done + success
+
+					result = request.responseText;
+					network_response = JSON.parse(result);
+					
+					strHTML = "<ul>";
+					network_response.networks.forEach(function(networks) { 
+					  strHTML += "<li>" + networks.company + " : " + networks.location.city + "</li>";
+					}) 
+					strHTML += "</ul>";
+					document.getElementById("data").innerHTML =strHTML;  
+				}
+				else if (request.readyState == 4 && request.status != 200) {
+
+					document.getElementById("data").innerHTML = "Something is wrong!  Check the logs to see where this went off the rails";
+
+				}
+
+				else if (request.readyState == 3) {
+
+					document.getElementById("data").innerHTML = "Too soon!  Try again";
+
+				}
+
+			}
+		// Step 4: fire off the HTTP request
+			request.send();
+			console.log("4 - Request sent");
+		}
+		
+	</script>
+</head>
+
+<body onload="loadFile()">
+	<h1>Bikes around the world</h1>
+	<div id="data">Loading...</div>
+	<p>The API I chose was CityBikes (http://api.citybik.es/v2/). This API shows the company, name, id, and location of city bikes all around the world. The location key includes city, country, latitude and longitude. The two options I used for the API requests were company and city. This API would be helpful when wanting to find city bikes in a foreign country or if you are interested in which companies offer city bikes.</p>
+</body>
+</html>
